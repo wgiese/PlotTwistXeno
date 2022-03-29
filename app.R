@@ -400,6 +400,18 @@ ui <- fluidPage(
                      
                    ),
 
+                   checkboxInput(inputId = "axes_limits",
+                                 label = "Change x-axis limits",
+                                 value = FALSE),
+                   conditionalPanel(
+                     condition = "input.axes_limits == true",
+                     numericInput("lim_start_x_1", "1st X-axis start:", value = 0),
+                     numericInput("lim_end_x_1", "1st X-axis end:", value = 100),
+                     numericInput("lim_start_x_2", "2nd X-axis start:", value = 100),
+                     numericInput("lim_end_x_2", "2nd X-axis end:", value = 200),
+                     #textInput("lab_y", "Y-axis:", value = "")
+                   ),
+
                    checkboxInput(inputId = "adj_fnt_sz",
                                  label = "Change font size",
                                  value = FALSE),
@@ -1655,6 +1667,8 @@ plot_data <- reactive({
     if (input$label_axes)
       p <- p + labs(x = input$lab_x, y = input$lab_y)
 
+    
+
     # # if font size is adjusted
     if (input$adj_fnt_sz) {
       p <- p + theme(axis.text = element_text(size=input$fnt_sz_ax))
@@ -1699,6 +1713,7 @@ plot_data <- reactive({
                                         hjust        = 0,
                                         point.padding = unit(1, 'lines'),
                                         segment.color = 'grey50',
+                                        #xlim = c(input$lim_start_x_1, input$lim_end_x_1),
                                         segment.size = 0.5)
               
 
@@ -1714,6 +1729,7 @@ plot_data <- reactive({
                                           hjust        = 0,
                                           point.padding = unit(1, 'lines'),
                                           segment.color = 'grey50',
+                                          #  xlim = c(input$lim_start_x_1, input$lim_end_x_1),
                                           segment.size = 0.5)
                                           
                 
@@ -1726,7 +1742,8 @@ plot_data <- reactive({
                                         direction    = "y",
                                         hjust        = 0,
                                         point.padding = unit(1, 'lines'),
-                                        segment.color = 'grey50',
+                                        segmaent.color = 'grey50',
+                                        #xlim = c(input$lim_start_x_1, input$lim_end_x_1),
                                         segment.size = 0.5)
               
               
@@ -1741,6 +1758,7 @@ plot_data <- reactive({
                                         hjust        = 0,
                                         point.padding = unit(1, 'lines'),
                                         segment.color = 'grey50',
+                                        #xlim = c(input$lim_start_x_1, input$lim_end_x_1),
                                         segment.size = 0.5)
               
             }
@@ -1804,6 +1822,14 @@ plot_data <- reactive({
        p <- p + labs(color = input$legend_title, fill=input$legend_title)
     }
     
+    # TODO: check!!
+    if (input$axes_limits)
+      p <- p + coord_cartesian(xlim = c(input$lim_start_x_1, input$lim_end_x_1))
+      #p <- p + xlim(input$lim_start_x_1, input$lim_end_x_1)
+      #p <- p + scale_x_continuous(limits = c(input$lim_start_x_1, input$lim_end_x_1))
+
+
+
     # if log-scale checked specified
     if (input$scale_log_10)
       p <- p + scale_y_log10() 
