@@ -1,4 +1,4 @@
-plot_time_series <- function(input, klass, koos) {
+plot_time_series <- function(input, klass, koos, plot_nr) {
 
       
     # Change linecolor in case of dark mode
@@ -11,41 +11,76 @@ plot_time_series <- function(input, klass, koos) {
     ############## Adjust X-scaling if necessary ##########
     
     #Adjust scale if range for x (min,max) is specified
-    if (input$range_x != "" &&  input$change_scale == TRUE && !vals$Datum) {
-      rng_x <- as.numeric(strsplit(input$range_x,",")[[1]])
-      observe({ print(rng_x) })
+    if (plot_nr == 1) {
+    
+        if (input$range_x != "" &&  input$change_scale == TRUE && !vals$Datum) {
+            rng_x <- as.numeric(strsplit(input$range_x,",")[[1]])
+            observe({ print(rng_x) })
       
       
-      #If min>max invert the axis
-      if (rng_x[1]>rng_x[2]) {
-        p <- p+ scale_x_reverse()
-        klaas <-  klaas %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
-        koos <-  koos %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
-      } else {
-        #Select timepoints within the set limits
-        klaas <-  klaas %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
-        koos <-  koos %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
-      }
+            #If min>max invert the axis
+            if (rng_x[1]>rng_x[2]) {
+                p <- p+ scale_x_reverse()
+                klaas <-  klaas %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
+                koos <-  koos %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
+            } else {
+            #Select timepoints within the set limits
+                klaas <-  klaas %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
+                koos <-  koos %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
+            }
       
+        } else if (input$range_x != "" &&  input$change_scale == TRUE && vals$Datum) {
+            rng_x <- as.Date(strsplit(input$range_x,",")[[1]])
+            # rng_x <- c(as.Date(rng_x[1]),as.Date(rng_x[2]))  
+        }
       
-
-      } else if (input$range_x != "" &&  input$change_scale == TRUE && vals$Datum) {
-        rng_x <- as.Date(strsplit(input$range_x,",")[[1]])
-        # rng_x <- c(as.Date(rng_x[1]),as.Date(rng_x[2]))  
-      }
-      
-      #Autoscale if rangeis NOT specified
-     else if (input$range_x == "" ||  input$change_scale == FALSE) {
-      rng_x <- c(min(klaas$Time), max(klaas$Time))
-      #     observe({ print(rng_x) })
+        #Autoscale if rangeis NOT specified
+        else if (input$range_x == "" ||  input$change_scale == FALSE) {
+            rng_x <- c(min(klaas$Time), max(klaas$Time))
+            #     observe({ print(rng_x) })
+        }
+    
+    
+        #Increase rng_x[2] if labels are added BUT NOT for small multiple
+        if (input$show_labels_y == TRUE && input$multiples == FALSE) {
+            rng_x[2] <- (rng_x[2]-rng_x[1])*.15+rng_x[2]
+        }
     }
+    else {
+        if (input$range_x_2nd != "" &&  input$add_2nd_scale == TRUE && !vals$Datum) {
+            rng_x <- as.numeric(strsplit(input$range_x_2nd,",")[[1]])
+            observe({ print(rng_x) })
+      
+      
+            #If min>max invert the axis
+            if (rng_x[1]>rng_x[2]) {
+                p <- p+ scale_x_reverse()
+                klaas <-  klaas %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
+                koos <-  koos %>% filter(Time >= rng_x[2] & Time <= rng_x[1] )
+            } else {
+            #Select timepoints within the set limits
+                klaas <-  klaas %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
+                koos <-  koos %>% filter(Time >= rng_x[1] & Time <= rng_x[2] )
+            }
+      
+        } else if (input$range_x_2nd != "" &&  input$add_2nd_scale == TRUE && vals$Datum) {
+            rng_x <- as.Date(strsplit(input$range_x_2nd,",")[[1]])
+            # rng_x <- c(as.Date(rng_x[1]),as.Date(rng_x[2]))  
+        }
+      
+        #Autoscale if rangeis NOT specified
+        else if (input$range_x_2nd == "" ||  input$add_2nd_scale == FALSE) {
+            rng_x <- c(min(klaas$Time), max(klaas$Time))
+            #     observe({ print(rng_x) })
+        }
     
     
-    #Increase rng_x[2] if labels are added BUT NOT for small multiple
-    if (input$show_labels_y == TRUE && input$multiples == FALSE) {
-      rng_x[2] <- (rng_x[2]-rng_x[1])*.15+rng_x[2]
+        #Increase rng_x[2] if labels are added BUT NOT for small multiple
+        if (input$show_labels_y == TRUE && input$multiples == FALSE) {
+            rng_x[2] <- (rng_x[2]-rng_x[1])*.15+rng_x[2]
+        }
+ 
     }
-    
     
     
     #Define how colors are used

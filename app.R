@@ -113,18 +113,18 @@ ui <- fluidPage(
                    
                    checkboxInput(inputId = "change_scale",
                                  label = "Change scale",
-                                 value = FALSE),
+                                 value = TRUE),
                    conditionalPanel(
                      condition = "input.change_scale == true",
-                     textInput("range_x", "Range x-axis (min,max)", value = "")
+                     textInput("range_x", "Range x-axis (min,max)", value = "1400,2400")
                    ),
                    
                    checkboxInput(inputId = "add_2nd_scale",
                                  label = "Add 2nd scale",
-                                 value = FALSE),
+                                 value = TRUE),
                    conditionalPanel(
                      condition = "input.add_2nd_scale == true",
-                     textInput("range_x_2nd", "Range 2nd x-axis (min,max)", value = "")
+                     textInput("range_x_2nd", "Range 2nd x-axis (min,max)", value = "7000,7300")
                    ),
 
                    conditionalPanel(
@@ -179,8 +179,8 @@ ui <- fluidPage(
                   ),
                             
  
-                  numericInput("plot_height", "Height (# pixels): ", value = 480),
-                  numericInput("plot_width", "Width (# pixels):", value = 600),
+                  numericInput("plot_height", "Height (# pixels): ", value = 780),
+                  numericInput("plot_width", "Width (# pixels):", value = 1570),
                   NULL),
                  
 ####################### UI Panel for Data Upload ###############
@@ -1423,7 +1423,7 @@ plot_data <- reactive({
     if (input$add_2nd_scale) {
         plotseries <- function(i){     
     
-            p <- plot_time_series(input, klass, koos)
+            p <- plot_time_series(input, klass, koos, i)
     
         }
         myplots <- lapply(1:2, plotseries)
@@ -1432,7 +1432,7 @@ plot_data <- reactive({
     }
     else {
         
-        res <- plot_time_series(input, klass, koos)
+        res <- plot_time_series(input, klass, koos, 1)
     }
 
     return(res)
