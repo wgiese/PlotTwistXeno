@@ -116,10 +116,7 @@ ui <- fluidPage(
                                  value = FALSE),
                    conditionalPanel(
                      condition = "input.change_scale == true",
-
-                     
                      textInput("range_x", "Range x-axis (min,max)", value = "")
-                     
                    ),
                    
                    conditionalPanel(
@@ -1411,7 +1408,10 @@ plot_data <- reactive({
     #Get the data
     klaas <- df_binned() 
     koos <- df_summary_mean()
+ 
     
+    source(file = paste0(getwd(),"/src/plot_functions.R"), local=T)                
+   
     # Change linecolor in case of dark mode
     if (input$dark) {
       line_color="grey80"
